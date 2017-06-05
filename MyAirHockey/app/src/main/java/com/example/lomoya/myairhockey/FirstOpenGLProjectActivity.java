@@ -25,7 +25,7 @@ public class FirstOpenGLProjectActivity extends Activity {
         boolean isSurpportGL2 = isSurpportGL2();
         if (isSurpportGL2) {
             glSurfaceView.setEGLContextClientVersion(2);
-            glSurfaceView.setRenderer(new AirHockeyRenderer());
+            glSurfaceView.setRenderer(new AirHockeyRenderer(this));
             glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
             renderSet = true;
 
