@@ -137,7 +137,7 @@ public class ObjectBuilder {
                 radius, baseHeight);
 
         builder.appendCircle(baseCircle, numVertices);
-        builder.appendOpenCylinder(baseCylinder., numVertices);
+        builder.appendOpenCylinder(baseCylinder, numVertices);
 
         //--------------------------------//
         float handleHeight = height * 0.75f;
@@ -150,8 +150,6 @@ public class ObjectBuilder {
 
         builder.appendCircle(handleCircle, numVertices);
         builder.appendOpenCylinder(handleCylinder, numVertices);
-
-
         return builder.build();
     }
 }
