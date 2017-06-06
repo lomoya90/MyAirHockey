@@ -3,6 +3,7 @@ package com.example.lomoya.myairhockey;
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
 import android.util.Log;
 
 import com.example.lomoya.myairhockey.utils.Logger;
@@ -33,12 +34,18 @@ public class AirHockeyRenderer implements GLSurfaceView.Renderer {
 
     private FloatBuffer vertexData;
 
+    private static final String U_MATRIX = "u_Matrix";
+    private int uMatrixLocation;
+    private final float[] projectionMatrix = new float[16];
+
     private static final String A_COLOR = "a_Color";
     private int aColorLocation;
 
     private static final String A_POSITION = "a_Position";
     private int aPositionLocation;
 
+
+    private final float[] modelMatrix = new float[16];
 
     private Context mContext;
 
@@ -55,15 +62,15 @@ public class AirHockeyRenderer implements GLSurfaceView.Renderer {
 //                0.5f, 0.5f,
                 // x, y, R, G, B
                 0f, 0f, 1.0f, 1.0f, 1.0f,
-                -0.5f, -0.5f, 0.7f, 0.7f, 0.7f,
-                0f, -0.5f, 0.7f, 0.7f, 0.7f,
-                0.5f, -0.5f, 0.7f, 0.7f, 0.7f,
+                -0.5f, -0.7f, 0.7f, 0.7f, 0.7f,
+                0f, -0.7f, 0.7f, 0.7f, 0.7f,
+                0.5f, -0.7f, 0.7f, 0.7f, 0.7f,
                 0.5f, 0f, 0.7f, 0.7f, 0.7f,
-                0.5f, 0.5f, 0.7f, 0.7f, 0.7f,
-                0f, 0.5f, 0.7f, 0.7f, 0.7f,
-                -0.5f, 0.5f, 0.7f, 0.7f, 0.7f,
+                0.5f, 0.7f, 0.7f, 0.7f, 0.7f,
+                0f, 0.7f, 0.7f, 0.7f, 0.7f,
+                -0.5f, 0.7f, 0.7f, 0.7f, 0.7f,
                 -0.5f, 0f, 0.7f, 0.7f, 0.7f,
-                -0.5f, -0.5f, 0.7f, 0.7f, 0.7f,
+                -0.5f, -0.7f, 0.7f, 0.7f, 0.7f,
 
 
 //                // outer border
@@ -106,6 +113,8 @@ public class AirHockeyRenderer implements GLSurfaceView.Renderer {
         }
 
         GLES20.glUseProgram(programId);
+        uMatrixLocation = GLES20.glGetUniformLocation(programId, U_MATRIX);
+
         aColorLocation = GLES20.glGetAttribLocation(programId, A_COLOR);
         aPositionLocation = GLES20.glGetAttribLocation(programId, A_POSITION);
 
@@ -123,12 +132,34 @@ public class AirHockeyRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceChanged(GL10 gl10, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
+//
+//        final float aspectRatio = width > height
+//                ? (float) width / (float) height : (float) height / (float) width;
+//
+//        if (width > height) { // landscape
+//            Matrix.orthoM(projectionMatrix, 0,
+//                    -aspectRatio * 0.75f, aspectRatio * 0.75f, -1f, 1f, -1f, 1f);
+//        } else {
+//            Matrix.orthoM(projectionMatrix, 0,
+//                    -1f, 1f, -aspectRatio * 0.75f, aspectRatio * 0.75f, -1f, 1f);
+//        }
+        Matrix.perspectiveM(projectionMatrix, 0, 45, (float) width / (float) height, 1f, 10f);
+
+        Matrix.setIdentityM(modelMatrix, 0); // 设置modelMatrix为单位矩阵
+        Matrix.translateM(modelMatrix, 0, 0f, 0f, -3f); // 得到一个平移矩阵
+        Matrix.rotateM(modelMatrix, 0, -60f, 1f, 0f, 0f);
+
+        final float[] tmp = new float[16];
+        Matrix.multiplyMM(tmp, 0, projectionMatrix, 0, modelMatrix, 0); // projectionMatrix * modelMatrix
+        System.arraycopy(tmp, 0, projectionMatrix, 0, tmp.length);
     }
 
     @Override
     public void onDrawFrame(GL10 gl10) {
         Log.i(TAG, "---draw fram----");
         GLES20.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
+        GLES20.glUniformMatrix4fv(uMatrixLocation, 1, false, projectionMatrix, 0);
 
 //        // draw outer border
 //        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 6, 6);
