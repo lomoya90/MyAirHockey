@@ -42,8 +42,10 @@ public class TextureHelper {
                 GLES20.GL_LINEAR);
 
         // 4.加载bitmap
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, textureObjectId[0]);
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
         bitmap.recycle();
+
+        GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
 
         // 5.解绑texture
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);

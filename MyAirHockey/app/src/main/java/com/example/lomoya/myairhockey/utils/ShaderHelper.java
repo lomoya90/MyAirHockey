@@ -3,9 +3,6 @@ package com.example.lomoya.myairhockey.utils;
 import android.opengl.GLES20;
 import android.util.Log;
 
-import javax.microedition.khronos.opengles.GL;
-import javax.microedition.khronos.opengles.GL10;
-
 /*
  * Created by Lomoya on 2017/6/4.
  */
@@ -91,5 +88,17 @@ public class ShaderHelper {
                     + "\nLog:" + GLES20.glGetProgramInfoLog(programId));
         }
         return validateStatus[0] != 0;
+    }
+
+    public static int buildProgram(String vertexShaderCode, String fragmentShaderCode) {
+        int programHandle;
+        int vertextShaderHandle = compileVertexShader(vertexShaderCode);
+        int fragmentShaderHandle = compileFragmentShader(fragmentShaderCode);
+
+        programHandle = linkProgram(vertextShaderHandle, fragmentShaderHandle);
+        if (Logger.DEBUG) {
+            validProgram(programHandle);
+        }
+        return programHandle;
     }
 }
