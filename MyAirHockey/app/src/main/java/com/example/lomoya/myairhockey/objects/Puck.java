@@ -6,10 +6,11 @@ import com.example.lomoya.myairhockey.shader.ColorShaderProgram;
 import java.util.List;
 
 /**
- * Created by liyan36 on 2017-06-06.
+ * Created by liyan36 on 2017-06-07.
  */
 
-public class Mallet {
+public class Puck {
+
     private static final int POSITION_COMPONENT_COUNT = 3;
 
     private VertexArray vertexArray;
@@ -18,12 +19,14 @@ public class Mallet {
     public float radius;
     public float height;
 
-    public Mallet(float radius, float height, int numVertices) {
+    public Puck(float radius, float height, int numPoints) {
         this.radius = radius;
         this.height = height;
-        ObjectBuilder.GeneratedData generatedData =
-                ObjectBuilder.createMallet(
-                        new Geometry.Point(0f, 0f, 0f), radius, height, numVertices);
+
+        Geometry.Cylinder cylinder = new Geometry.Cylinder(
+                new Geometry.Point(0f, 0f, 0f), radius, height);
+        ObjectBuilder.GeneratedData generatedData = ObjectBuilder.createPuck(cylinder, numPoints);
+
         vertexArray = new VertexArray(generatedData.vertexData);
         drawCommands = generatedData.drawCommands;
     }

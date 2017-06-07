@@ -25,15 +25,15 @@ public class ObjectBuilder {
         vertexData = new float[sizeOfVertices * FLOAT_PER_VERTEX];
     }
 
-    private int sizeOfCircleInVertices(int numPoints) {
+    private static int sizeOfCircleInVertices(int numPoints) {
         return 1 + (numPoints + 1);
     }
 
-    private int sizeOfCylinderInVertices(int numPoints) {
+    private static int sizeOfCylinderInVertices(int numPoints) {
         return (numPoints + 1) * 2;
     }
 
-    public void appendCircle(Geometry.Circle circle, int numPoints) {
+    private void appendCircle(Geometry.Circle circle, int numPoints) {
 
         final int start = offset / FLOAT_PER_VERTEX;
         final int numVertices = sizeOfCircleInVertices(numPoints);
@@ -60,7 +60,7 @@ public class ObjectBuilder {
         drawCommandList.add(drawCommand);
     }
 
-    public void appendOpenCylinder(Geometry.Cylinder cylinder, int numPoints) {
+    private void appendOpenCylinder(Geometry.Cylinder cylinder, int numPoints) {
         final int start = offset / FLOAT_PER_VERTEX;
         final int numVertices = sizeOfCylinderInVertices(numPoints);
 
@@ -110,7 +110,7 @@ public class ObjectBuilder {
      * @param numVertices
      * @return
      */
-    public GeneratedData createPuck(Geometry.Cylinder cylinder, int numVertices) {
+    public static GeneratedData createPuck(Geometry.Cylinder cylinder, int numVertices) {
 
         int size = sizeOfCircleInVertices(numVertices) + sizeOfCylinderInVertices(numVertices);
 
@@ -124,8 +124,8 @@ public class ObjectBuilder {
         return builder.build();
     }
 
-    public GeneratedData createMallet(Geometry.Point center, float radius, float height,
-                                      int numVertices) {
+    public static GeneratedData createMallet(Geometry.Point center, float radius, float height,
+                                             int numVertices) {
         int size = sizeOfCircleInVertices(numVertices) * 2
                 + sizeOfCylinderInVertices(numVertices) * 2;
         ObjectBuilder builder = new ObjectBuilder(size);
@@ -146,7 +146,7 @@ public class ObjectBuilder {
         Geometry.Circle handleCircle = new Geometry.Circle(
                 center.translateY(height / 2f), handleRadius);
         Geometry.Cylinder handleCylinder = new Geometry.Cylinder(
-                center.translateY(-handleHeight / 2f), handleRadius, handleHeight);
+                center.translateY(handleHeight / 2f), handleRadius, handleHeight);
 
         builder.appendCircle(handleCircle, numVertices);
         builder.appendOpenCylinder(handleCylinder, numVertices);
