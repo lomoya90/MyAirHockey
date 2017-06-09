@@ -5,6 +5,8 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Toast;
 
 /**
@@ -14,6 +16,7 @@ import android.widget.Toast;
 public class FirstOpenGLProjectActivity extends Activity {
 
     private GLSurfaceView glSurfaceView;
+    private AirHockeyRenderer airHockeyRenderer;
     private boolean renderSet = false;
 
     @Override
@@ -21,11 +24,12 @@ public class FirstOpenGLProjectActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         glSurfaceView = new GLSurfaceView(this);
+        airHockeyRenderer = new AirHockeyRenderer(this);
 
         boolean isSurpportGL2 = isSurpportGL2();
         if (isSurpportGL2) {
             glSurfaceView.setEGLContextClientVersion(2);
-            glSurfaceView.setRenderer(new AirHockeyRenderer(this));
+            glSurfaceView.setRenderer(airHockeyRenderer);
             glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
             renderSet = true;
 
@@ -33,6 +37,36 @@ public class FirstOpenGLProjectActivity extends Activity {
             Toast.makeText(this, "This device doesn't surpport GL2.0.", Toast.LENGTH_SHORT).show();
         }
         setContentView(glSurfaceView);
+        glSurfaceView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                // 将屏幕坐标转换成归一化设备坐标：
+                final float normalizedX = (motionEvent.getX() / (view.getWidth() / 2f)) - 1;
+                final float normalizedY = (motionEvent.getY() / (view.getHeight() / 2f)) - 1;
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        glSurfaceView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                airHockeyRenderer.handleTouchPress(normalizedX, normalizedY);
+                            }
+                        });
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        glSurfaceView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                airHockeyRenderer.handleTouchDrag(normalizedX, normalizedY);
+                            }
+                        });
+                        break;
+                    default:
+                        break;
+                }
+
+                return true;
+            }
+        });
     }
 
     private boolean isSurpportGL2() {

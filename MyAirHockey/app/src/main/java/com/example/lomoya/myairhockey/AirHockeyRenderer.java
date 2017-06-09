@@ -133,4 +133,12 @@ public class AirHockeyRenderer implements GLSurfaceView.Renderer {
 //        Matrix.rotateM(modelMatrix, 0, -45f, 1.0f, 0f, 0f);
         Matrix.multiplyMM(modelViewProjectionMatrix, 0, viewProjectionMatrix, 0, modelMatrix, 0);
     }
+
+    public void handleTouchPress(float x, float y) {
+
+    }
+
+    public void handleTouchDrag(float x, float y) {
+
+    }
 }
